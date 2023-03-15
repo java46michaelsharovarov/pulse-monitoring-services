@@ -9,35 +9,34 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 
-import telran.monititoring.model.*;
-import telran.monitoring.service.AnalyzerService;
+import telran.monititoring.model.PulseProbe;
+import telran.monitoring.service.AvgReducerService;
 
 @SpringBootApplication
-public class AnalyzerAppl {
+public class AvgReducerAppl {
 
 	@Autowired
-	AnalyzerService analyzerService;
-
+	AvgReducerService service;
+	
 	@Autowired
 	StreamBridge streamBridge;
 
-	@Value("${app.binding.name:jumps-out-0}")
+	@Value("${app.binding.name:average-out-0}")
 	private String bindingName;
-
+	
 	public static void main(String[] args) {
-		SpringApplication.run(AnalyzerAppl.class, args);
+		SpringApplication.run(AvgReducerAppl.class, args);
 	}
 
 	@Bean
-	Consumer<PulseProbe> pulseProbeConsumer() {
-		return this::pulseProbeAnalyzing;		
+	Consumer<PulseProbe> pulseProbConsumerAvg() {
+		return this::pulseProbAvgReducing;
 	}
 	
-	void pulseProbeAnalyzing(PulseProbe pulseProbe) {
-		PulseJump pulseJump =  analyzerService.processPulseProbe(pulseProbe);
-		if(pulseJump != null) {
-			streamBridge.send(bindingName, pulseJump);
+	void pulseProbAvgReducing(PulseProbe probe) {
+		Integer avg = service.reduce(probe);
+		if(avg != null) {
+			streamBridge.send(bindingName, new PulseProbe(probe.patientID, 0, avg));
 		}
 	}
-	
 }
