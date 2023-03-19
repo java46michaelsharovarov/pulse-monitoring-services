@@ -56,6 +56,11 @@
 			<artifactId>pulse-monitoring-dto</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -80,5 +85,6 @@
 		<module>pulse-monitoring-analyzer</module>
 		<module>pulse-monitoring-avg-reducer</module>
 		<module>pulse-monitoring-jumps-notifier</module>
+		<module>pulse-monitoring-notification-data-provider</module>
 	</modules>
 </project>
