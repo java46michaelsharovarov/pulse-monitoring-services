@@ -79,5 +79,6 @@
 	<modules>
 		<module>pulse-monitoring-analyzer</module>
 		<module>pulse-monitoring-avg-reducer</module>
+		<module>pulse-monitoring-jumps-notifier</module>
 	</modules>
 </project>

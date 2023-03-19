@@ -17,7 +17,7 @@ import telran.monitoring.service.AnalyzerService;
 @SpringBootApplication
 public class AnalyzerAppl {
 
-	Logger LOG = LoggerFactory.getLogger(AnalyzerAppl.class);
+	static Logger LOG = LoggerFactory.getLogger(AnalyzerAppl.class);
 	
 	@Autowired
 	AnalyzerService analyzerService;
@@ -39,9 +39,10 @@ public class AnalyzerAppl {
 	
 	@SuppressWarnings("unused")
 	void pulseProbeAnalyzing(PulseProbe pulseProbe) {
+		LOG.debug("called pulseProbeAnalyzing");
 		PulseJump pulseJump = analyzerService.processPulseProbe(pulseProbe);
-		LOG.debug("called analyzerService.processPulseProbe({}), pulseJump=[{}]", pulseProbe.toString(), pulseJump.toString());
 		if(pulseJump != null) {
+			LOG.debug("called analyzerService.processPulseProbe({}), pulseJump=[{}]", pulseProbe.toString(), pulseJump.toString());
 			streamBridge.send(bindingName, pulseJump);
 			LOG.debug("called treamBridge.send({}, {})", bindingName, pulseJump.toString());
 		} else {
