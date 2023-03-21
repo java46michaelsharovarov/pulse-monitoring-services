@@ -3,12 +3,15 @@ package telran.monitoring.controller;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
+import telran.monititoring.model.NotificationData;
 import telran.monitoring.service.DataProviderService;
 
 @Slf4j
@@ -20,13 +23,14 @@ public class DataProviderController {
 	DataProviderService dataProvider;
 	
 	@GetMapping("last/{patientId}")
-	String getLastVisit(@PathVariable("patientId") long id) {
+	NotificationData getLastVisit(@PathVariable("patientId") long id) {
 		log.debug("request for the last visit by the patient's ID: {}", id);
-		String data;
+		NotificationData data;
 		try {
-			data = dataProvider.getNotificationData(id).toString();
+			data = dataProvider.getNotificationData(id);
 		} catch (NoSuchElementException e) {
-			return e.getMessage();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					String.format("Patient with id %d does not exist", id));
 		}
 		return data;
 	}

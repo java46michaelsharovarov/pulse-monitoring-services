@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import telran.monititoring.model.NotificationData;
-import telran.monitoring.proj.VisitData;
+import telran.monitoring.repo.DoctorRepository;
+import telran.monitoring.repo.PatientRepository;
 import telran.monitoring.repo.VisitRepository;
 
 @Slf4j
@@ -17,16 +18,24 @@ import telran.monitoring.repo.VisitRepository;
 public class DataProviderServiceImpl implements DataProviderService {
 
 	@Autowired
-	VisitRepository visits;
+	VisitRepository visitRepository;
+	
+	@Autowired
+	DoctorRepository doctorRepository;
+	
+	@Autowired
+	PatientRepository patientRepository;
 	
 	@Override
 	public NotificationData getNotificationData(long patientId) {
-		VisitData visit = visits.getLastVisitById(patientId);
-		if(visit == null) {
+		String doctorEmail = visitRepository.getDoctorEmail(patientId);
+		if(doctorEmail == null) {
 			log.debug("patient with id {} does not exist", patientId);
 			throw new NoSuchElementException(String.format("Patient with id %d does not exist", patientId));
 		}
-		NotificationData data = new NotificationData(visit.getEmail(), visit.getDoctorName(), visit.getPatientName());
+		String doctorName = doctorRepository.findById(doctorEmail).get().getName();
+		String patientName = patientRepository.findById(patientId).get().getName();
+		NotificationData data = new NotificationData(doctorEmail, doctorName, patientName);
 		log.debug("last vist patient ID {}: {}", patientId, data.toString());
 		return data;
 	}

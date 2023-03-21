@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name="visits")
+@Table(name="visits", indexes= {@Index(columnList = "patient_id")} )
 public class VisitEntity {
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,11 +17,11 @@ public class VisitEntity {
 	long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "email")
+	@JoinColumn(name = "doctor_email")
 	DoctorEntity doctor;
 	
 	@ManyToOne
-	@JoinColumn(name = "patientid")
+	@JoinColumn(name = "patient_id")
 	PatientEntity patient;
 	
 	LocalDate date;
