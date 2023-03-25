@@ -7,8 +7,6 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,15 +21,14 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import telran.monititoring.model.*;
-import telran.monitoring.AnalyzerAppl;
 import telran.monitoring.service.AnalyzerService;
 
+@Slf4j
 @SpringBootTest
 @Import(TestChannelBinderConfiguration.class)
 class AnalyzerControllerTest {
-	
-	Logger LOG = LoggerFactory.getLogger(AnalyzerAppl.class);
 	
 	@Autowired
 	InputDestination producer;
@@ -56,21 +53,21 @@ class AnalyzerControllerTest {
 
 	@Test
 	void receivingProbeNoJump() {
-		LOG.debug("receivingProbeNoJump : call producer.send({}, 'pulseProbeConsumer-in-0')", probeNoJump.toString());
+		log.debug("receivingProbeNoJump : call producer.send({}, 'pulseProbeConsumer-in-0')", probeNoJump.toString());
 		producer.send(new GenericMessage<PulseProbe>(probeNoJump), "pulseProbeConsumer-in-0");
 		Message<byte[]> message = consumer.receive(10, "jumps-out-0");
 		assertNull(message);
-		LOG.debug("receivingProbeNoJump : called consumer.receive(10, \"jumps-out-0\"), message=[NULL]");
+		log.debug("receivingProbeNoJump : called consumer.receive(10, \"jumps-out-0\"), message=[NULL]");
 	}
 
 	@Test
 	void receivingProbeJump() throws StreamReadException, DatabindException, IOException {
-		LOG.debug("receivingProbeJump : call producer.send({}, 'pulseProbeConsumer-in-0')", probeJump.toString());
+		log.debug("receivingProbeJump : call producer.send({}, 'pulseProbeConsumer-in-0')", probeJump.toString());
 		producer.send(new GenericMessage<PulseProbe>(probeJump), "pulseProbeConsumer-in-0");
 		Message<byte[]> message = consumer.receive(10, "jumps-out-0");
 		assertNotNull(message);
 		PulseJump jump = mapper.readValue(message.getPayload(), PulseJump.class);
-		LOG.debug("receivingProbeJump : called consumer.receive(10, \"jumps-out-0\"), message=[{}]", jump.toString());
+		log.debug("receivingProbeJump : called consumer.receive(10, \"jumps-out-0\"), message=[{}]", jump.toString());
 		assertEquals(pulseJump, jump);
 	}
 

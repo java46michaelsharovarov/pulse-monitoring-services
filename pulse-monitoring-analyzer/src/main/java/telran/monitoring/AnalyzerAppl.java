@@ -2,8 +2,6 @@ package telran.monitoring;
 
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -11,14 +9,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 
+import lombok.extern.slf4j.Slf4j;
 import telran.monititoring.model.*;
 import telran.monitoring.service.AnalyzerService;
 
+@Slf4j
 @SpringBootApplication
 public class AnalyzerAppl {
 
-	static Logger LOG = LoggerFactory.getLogger(AnalyzerAppl.class);
-	
 	@Autowired
 	AnalyzerService analyzerService;
 
@@ -37,16 +35,15 @@ public class AnalyzerAppl {
 		return this::pulseProbeAnalyzing;		
 	}
 	
-	@SuppressWarnings("unused")
 	void pulseProbeAnalyzing(PulseProbe pulseProbe) {
-		LOG.debug("called pulseProbeAnalyzing");
+		log.debug("called pulseProbeAnalyzing");
 		PulseJump pulseJump = analyzerService.processPulseProbe(pulseProbe);
 		if(pulseJump != null) {
-			LOG.debug("called analyzerService.processPulseProbe({}), pulseJump=[{}]", pulseProbe.toString(), pulseJump.toString());
+			log.debug("called analyzerService.processPulseProbe({}), pulseJump=[{}]", pulseProbe.toString(), pulseJump.toString());
 			streamBridge.send(bindingName, pulseJump);
-			LOG.debug("called treamBridge.send({}, {})", bindingName, pulseJump.toString());
+			log.debug("called treamBridge.send({}, {})", bindingName, pulseJump.toString());
 		} else {
-			LOG.debug("pulseJump is NULL");
+			log.debug("pulseJump is NULL");
 		}
 	}
 	
