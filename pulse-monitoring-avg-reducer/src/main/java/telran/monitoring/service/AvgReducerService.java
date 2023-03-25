@@ -1,6 +1,6 @@
 package telran.monitoring.service;
 
-import telran.monititoring.model.PulseProbe;
+import telran.monitoring.model.PulseProbe;
 
 public interface AvgReducerService {
 

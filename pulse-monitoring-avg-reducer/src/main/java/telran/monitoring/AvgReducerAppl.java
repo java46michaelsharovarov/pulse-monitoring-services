@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 
-import telran.monititoring.model.PulseProbe;
+import telran.monitoring.model.PulseProbe;
 import telran.monitoring.service.AvgReducerService;
 
 @SpringBootApplication

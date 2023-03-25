@@ -1,4 +1,4 @@
-package telran.monitoring.controller;
+package telran.monitoring;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import telran.monititoring.model.*;
+import telran.monitoring.model.*;
 import telran.monitoring.service.AnalyzerService;
 
 @Slf4j

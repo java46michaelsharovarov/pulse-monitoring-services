@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import telran.monititoring.model.*;
+import telran.monitoring.model.*;
 import telran.monitoring.service.NotificationDataProvider;
 
 @SpringBootApplication

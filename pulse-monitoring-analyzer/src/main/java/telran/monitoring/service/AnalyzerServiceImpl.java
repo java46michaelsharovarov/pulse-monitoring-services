@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
-import telran.monititoring.model.PulseJump;
-import telran.monititoring.model.PulseProbe;
 import telran.monitoring.entities.LastProbe;
+import telran.monitoring.model.PulseJump;
+import telran.monitoring.model.PulseProbe;
 import telran.monitoring.repo.LastProbeRepository;
 
 @Service

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
-import telran.monititoring.model.NotificationData;
+import telran.monitoring.model.NotificationData;
 import telran.monitoring.service.DataProviderService;
 
 @Slf4j

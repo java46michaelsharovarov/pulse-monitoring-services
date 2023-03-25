@@ -1,6 +1,6 @@
 package telran.monitoring.service;
 
-import telran.monititoring.model.NotificationData;
+import telran.monitoring.model.NotificationData;
 
 public interface NotificationDataProvider {
 

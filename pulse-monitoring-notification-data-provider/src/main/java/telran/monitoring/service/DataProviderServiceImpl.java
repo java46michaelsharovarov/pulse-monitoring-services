@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
-import telran.monititoring.model.NotificationData;
+import telran.monitoring.model.NotificationData;
 import telran.monitoring.repo.DoctorRepository;
 import telran.monitoring.repo.PatientRepository;
 import telran.monitoring.repo.VisitRepository;

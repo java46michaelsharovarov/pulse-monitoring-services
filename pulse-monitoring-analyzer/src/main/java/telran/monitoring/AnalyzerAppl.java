@@ -10,7 +10,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 
 import lombok.extern.slf4j.Slf4j;
-import telran.monititoring.model.*;
+import telran.monitoring.model.*;
 import telran.monitoring.service.AnalyzerService;
 
 @Slf4j

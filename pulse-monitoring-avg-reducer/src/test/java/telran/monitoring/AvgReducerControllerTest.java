@@ -1,4 +1,4 @@
-package telran.monitoring.controller;
+package telran.monitoring;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import telran.monititoring.model.*;
+import telran.monitoring.model.*;
 import telran.monitoring.service.AvgReducerService;
 
 @SpringBootTest

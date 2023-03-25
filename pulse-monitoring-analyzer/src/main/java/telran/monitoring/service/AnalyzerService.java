@@ -1,6 +1,6 @@
 package telran.monitoring.service;
 
-import telran.monititoring.model.*;
+import telran.monitoring.model.*;
 
 public interface AnalyzerService {
 
