@@ -25,20 +25,20 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 	@Transactional
 	public PulseJump processPulseProbe(PulseProbe probe) {
 		PulseJump res = null;
-		LastProbe lastProbe = lastProbeRepository.findById(probe.patientID).orElse(null);
+		LastProbe lastProbe = lastProbeRepository.findById(probe.patientId).orElse(null);
 		if (lastProbe == null) {
-			lastProbe = new LastProbe(probe.patientID, probe.value);
+			lastProbe = new LastProbe(probe.patientId, probe.value);
 			log.debug("lastProbe is NULL. New lastProbe is: {}", probe.toString());
 		} else {
 			if (isJump(lastProbe.getValue(), probe.value)) {
-				res = new PulseJump(probe.patientID, lastProbe.getValue(), probe.value);
+				res = new PulseJump(probe.patientId, lastProbe.getValue(), probe.value);
 				log.debug("isJump = true. {}", res.toString());
 			}
 			lastProbe.setValue(probe.value);
 			log.trace("lastProbe updated: {}", probe.toString());
 		}
 		lastProbeRepository.save(lastProbe);
-		log.debug("lastProbe saved in lastProbeRepository");
+		log.trace("lastProbe saved in lastProbeRepository");
 		return res;
 	}
 

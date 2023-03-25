@@ -28,10 +28,10 @@ public class AvgReducerServiceImpl implements AvgReducerService {
 	@Transactional
 	public Integer reduce(PulseProbe probe) {
 		Integer avg = null;
-		ProbesList probesList = probesListRepository.findById(probe.patientID).orElse(null);
+		ProbesList probesList = probesListRepository.findById(probe.patientId).orElse(null);
 		if(probesList == null) {
-			probesList = new ProbesList(probe.patientID);
-			log.debug("for patient {} no saved pulse values", probe.patientID);
+			probesList = new ProbesList(probe.patientId);
+			log.debug("for patient {} no saved pulse values", probe.patientId);
 		} else {
 			log.trace("for patient {} number of saved pulse values is {}",
 					probesList.getPatientId(), probesList.getValues().size());
@@ -41,12 +41,12 @@ public class AvgReducerServiceImpl implements AvgReducerService {
 		log.trace("added value: {} in the probesList", probe.value);
 		if(values.size() >= reducingSize) {
 			avg = calculatingAvg(probesList.getValues());
-			log.debug("average pulse value for the patient with ID {}: {} ", probe.patientID, avg);
+			log.debug("average pulse value for the patient with ID {}: {} ", probe.patientId, avg);
 			values.clear();
 			log.debug("the list of values has been cleared");
 		}
 		probesListRepository.save(probesList);
-		log.debug("probesList saved in probesListRepository");
+		log.trace("probesList saved in probesListRepository");
 		return avg;
 	}
 

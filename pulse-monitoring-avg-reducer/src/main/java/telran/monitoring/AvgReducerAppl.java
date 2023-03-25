@@ -36,7 +36,7 @@ public class AvgReducerAppl {
 	void pulseProbAvgReducing(PulseProbe probe) {
 		Integer avg = service.reduce(probe);
 		if(avg != null) {
-			streamBridge.send(bindingName, new PulseProbe(probe.patientID, 0, avg));
+			streamBridge.send(bindingName, new PulseProbe(probe.patientId, 0, avg));
 		}
 	}
 }
