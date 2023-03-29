@@ -1,8 +1,6 @@
 package telran.monitoring.entities;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 

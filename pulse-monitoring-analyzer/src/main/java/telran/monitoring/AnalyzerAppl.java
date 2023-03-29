@@ -23,7 +23,7 @@ public class AnalyzerAppl {
 	@Autowired
 	StreamBridge streamBridge;
 
-	@Value("${app.binding.name:jumps-out-0}")
+	@Value("${app.binding.name}")
 	private String bindingName;
 
 	public static void main(String[] args) {

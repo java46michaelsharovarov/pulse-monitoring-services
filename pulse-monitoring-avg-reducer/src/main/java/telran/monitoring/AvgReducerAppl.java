@@ -21,7 +21,7 @@ public class AvgReducerAppl {
 	@Autowired
 	StreamBridge streamBridge;
 
-	@Value("${app.binding.name:average-out-0}")
+	@Value("${app.binding.name}")
 	private String bindingName;
 	
 	public static void main(String[] args) {
@@ -29,7 +29,7 @@ public class AvgReducerAppl {
 	}
 
 	@Bean
-	Consumer<PulseProbe> pulseProbConsumerAvg() {
+	Consumer<PulseProbe> pulseProbeConsumerAvg() {
 		return this::pulseProbAvgReducing;
 	}
 	
