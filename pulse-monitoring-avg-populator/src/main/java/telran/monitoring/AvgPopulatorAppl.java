@@ -12,8 +12,8 @@ import telran.monitoring.entities.AvgPulseDoc;
 import telran.monitoring.model.PulseProbe;
 import telran.monitoring.repo.AvgPulseRepository;
 
-@SpringBootApplication
 @Slf4j
+@SpringBootApplication
 public class AvgPopulatorAppl {
 
 	@Autowired
