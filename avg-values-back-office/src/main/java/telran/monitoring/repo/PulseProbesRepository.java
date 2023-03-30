@@ -22,5 +22,7 @@ public interface PulseProbesRepository extends MongoRepository<AvgPulseDoc, Long
 			"{ $project: {_id: 0, avgPulse: 1}}"
 	})
 	int getAvgValueByPatientIdAndDateRange(long patientId, LocalDateTime from, LocalDateTime to);
+
+	boolean existsByPatientId(long patientId);
 	
 }

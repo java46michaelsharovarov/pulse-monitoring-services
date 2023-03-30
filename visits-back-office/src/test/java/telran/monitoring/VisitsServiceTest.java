@@ -122,7 +122,6 @@ class VisitsServiceTest {
 		current = service.getVisitsDates(NEW_PATIENT_ID, LocalDate.parse(DATE_1), LocalDate.parse(DATE_3));
 		expected = List.of(visitDto1, visitDto2, visitDto3);
 		assertIterableEquals(expected, current);
-		
 	}
 	
 	@Test

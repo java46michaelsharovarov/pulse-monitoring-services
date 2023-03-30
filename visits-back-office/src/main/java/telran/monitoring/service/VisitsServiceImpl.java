@@ -89,7 +89,7 @@ public class VisitsServiceImpl implements VisitsService {
 			throw new NoSuchElementException(String.format("patient with id:%d does not exist", patientId));
 		}
 		if(from.isAfter(to)) {
-			log.error("{} after {}", from, to);
+			log.error("date 'from' {} cannot be after date 'to' {}", from, to);
 			throw new IllegalArgumentException(String.format("date 'from' %s cannot be after date 'to' %s", from, to));
 		}
 		List<VisitEntity> visits = visitRepository.findByPatientIdAndBetweenDate(patientId, from, to);
