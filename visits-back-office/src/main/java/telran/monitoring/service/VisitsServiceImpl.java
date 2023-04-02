@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import telran.monitoring.model.*;
@@ -15,6 +16,7 @@ import telran.monitoring.entities.*;
 
 @Service
 @Slf4j
+@Transactional
 public class VisitsServiceImpl implements VisitsService {
 
 	@Autowired
@@ -34,7 +36,7 @@ public class VisitsServiceImpl implements VisitsService {
 		}
 		PatientEntity patient = new PatientEntity(patientDto.patientId, patientDto.patientName);
 		patientRepository.save(patient);
-		log.debug("{} saved in repository", patientDto);
+		log.debug("{} is saved in repository", patientDto);
 	}
 
 	@Override
@@ -45,7 +47,7 @@ public class VisitsServiceImpl implements VisitsService {
 		}
 		DoctorEntity doctor = new DoctorEntity(doctorDto.doctorEmail, doctorDto.doctorName);
 		doctorRepository.save(doctor);
-		log.debug("{} saved in repository", doctorDto);
+		log.debug("{} is saved in repository", doctorDto);
 	}
 
 	@Override
@@ -63,9 +65,10 @@ public class VisitsServiceImpl implements VisitsService {
 		LocalDate date = LocalDate.parse(visitDto.date);
 		VisitEntity visit = new VisitEntity(doctor, patient, date);
 		visitRepository.save(visit);
-		log.debug("{} saved in repository", visitDto);
+		log.debug("visit - doctorEmail: {}, patient Id: {}, date: {} is saved in repository", visitDto.doctorEmail, visitDto.patientId, visitDto.date);
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public List<VisitDto> getAllVisits(long patientId) {
 		if(!patientRepository.existsById(patientId)) {
@@ -82,6 +85,7 @@ public class VisitsServiceImpl implements VisitsService {
 		return res;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<VisitDto> getVisitsDates(long patientId, LocalDate from, LocalDate to) {
 		if(!patientRepository.existsById(patientId)) {

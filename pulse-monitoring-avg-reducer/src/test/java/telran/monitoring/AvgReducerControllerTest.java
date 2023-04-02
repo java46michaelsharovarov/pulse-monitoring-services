@@ -49,14 +49,14 @@ class AvgReducerControllerTest {
 
 	@Test
 	void receivingPulseProbe1() {
-		producer.send(new GenericMessage<PulseProbe>(pulseProbe1), "pulseProbConsumerAvg-in-0");
+		producer.send(new GenericMessage<PulseProbe>(pulseProbe1), "pulseProbeConsumerAvg-in-0");
 		Message<byte[]> message = consumer.receive(10, "average-out-0");
 		assertNull(message);
 	}
 
 	@Test
 	void receivingPulseProbe2() throws StreamReadException, DatabindException, IOException {
-		producer.send(new GenericMessage<PulseProbe>(pulseProbe2), "pulseProbConsumerAvg-in-0");
+		producer.send(new GenericMessage<PulseProbe>(pulseProbe2), "pulseProbeConsumerAvg-in-0");
 		Message<byte[]> message = consumer.receive(10, "average-out-0");
 		assertNotNull(message);
 		ObjectMapper mapper = new ObjectMapper();

@@ -15,7 +15,7 @@ import org.springframework.messaging.support.GenericMessage;
 
 import telran.monitoring.entities.AvgPulseDoc;
 import telran.monitoring.model.PulseProbe;
-import telran.monitoring.repo.AvgPulseRepository;
+import telran.monitoring.repo.AvgPulseProbeRepository;
 
 @SpringBootTest
 @Import(TestChannelBinderConfiguration.class)
@@ -30,7 +30,7 @@ class AvgPulsePopulatorTest {
 	InputDestination producer;
 	
 	@Autowired
-	AvgPulseRepository pulseRepository;
+	AvgPulseProbeRepository pulseRepository;
 	
 	PulseProbe pulseProbe1 = new PulseProbe(PATIENT_ID1, 0, VALUE1);
 	PulseProbe pulseProbe2 = new PulseProbe(PATIENT_ID2, 0, VALUE2);

@@ -2,8 +2,6 @@ package telran.monitoring;
 
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -12,14 +10,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import lombok.extern.slf4j.Slf4j;
 import telran.monitoring.model.*;
 import telran.monitoring.service.NotificationDataProvider;
 
 @SpringBootApplication
+@Slf4j
 public class JumpsNotifierAppl {
 
-	static Logger LOG = LoggerFactory.getLogger(JumpsNotifierAppl.class);
-	
 	@Autowired
 	JavaMailSender mailSender;
 	
@@ -39,7 +37,7 @@ public class JumpsNotifierAppl {
 	}
 
 	void jumpProcessing(PulseJump jump) {
-		LOG.trace("received jump: [{}]", jump);
+		log.trace("received jump: [{}]", jump);
 		sendMail(jump);
 	}
 
@@ -51,7 +49,7 @@ public class JumpsNotifierAppl {
 		smm.setSubject(subject + " " + data.patientName);
 		smm.setText(text);
 		mailSender.send(smm);
-		LOG.trace("sent text mail {}", text);
+		log.trace("sent text mail {}", text);
 	}
 
 	private String getMailText(PulseJump jump, NotificationData data) {

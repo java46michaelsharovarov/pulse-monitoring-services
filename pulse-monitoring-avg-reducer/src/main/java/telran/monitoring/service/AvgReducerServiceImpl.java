@@ -18,7 +18,7 @@ import telran.monitoring.repo.ProbesListRepository;
 @Slf4j
 public class AvgReducerServiceImpl implements AvgReducerService {
 
-	@Value("${app.reducing.size:2}")
+	@Value("${app.reducing.size}")
 	int reducingSize;
 	
 	@Autowired

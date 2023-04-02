@@ -41,7 +41,7 @@ public class AnalyzerAppl {
 		if(pulseJump != null) {
 			log.debug("called analyzerService.processPulseProbe({}), pulseJump=[{}]", pulseProbe.toString(), pulseJump.toString());
 			streamBridge.send(bindingName, pulseJump);
-			log.debug("called treamBridge.send({}, {})", bindingName, pulseJump.toString());
+			log.debug("called streamBridge.send({}, {})", bindingName, pulseJump.toString());
 		} else {
 			log.debug("pulseJump is NULL");
 		}

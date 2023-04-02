@@ -5,11 +5,10 @@ import static org.mockito.Mockito.when;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,9 +27,8 @@ import telran.monitoring.service.NotificationDataProvider;
 
 @SpringBootTest
 @Import(TestChannelBinderConfiguration.class)
+@Slf4j
 class JumpsNotifierTest {
-
-	Logger LOG = LoggerFactory.getLogger(JumpsNotifierTest.class);
 
 	@Autowired
 	InputDestination producer;
@@ -54,11 +52,11 @@ class JumpsNotifierTest {
 	void test() throws MessagingException {
 		when(dataProvider.getData(PATIENT_ID))
 		.thenReturn(new NotificationData(DOCTOR_EMAIL, DOCTOR_NAME, PATIENT_NAME));
-		LOG.debug("test");
+		log.debug("test");
 		producer.send(new GenericMessage<PulseJump>(pulseJump), "jumpsConsumer-in-0");
-		LOG.debug("send");
+		log.debug("send");
 		MimeMessage message = mailExtension.getReceivedMessages()[0];
-		LOG.debug("message");
+		log.debug("message");
 		assertEquals(DOCTOR_EMAIL, message.getAllRecipients()[0].toString());
 		assertTrue(message.getSubject().contains(PATIENT_NAME));
 	}

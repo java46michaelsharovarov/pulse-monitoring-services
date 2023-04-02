@@ -82,8 +82,8 @@ public class VisitsController {
 				log.debug(REQUEST_TO_ALL_VISITS, patientId);
 				return service.getAllVisits(patientId);
 			}
-			LocalDate dateFrom = from == null ? LocalDate.of(1900, 1, 1) : LocalDate.parse(from);
-			LocalDate dateTo = to == null ? LocalDate.now() : LocalDate.parse(to);
+			LocalDate dateFrom = from == null ? LocalDate.of(1000, 1, 1) : LocalDate.parse(from);
+			LocalDate dateTo = to == null ? LocalDate.of(10000, 1, 1) : LocalDate.parse(to);
 			log.debug(REQUEST_TO_ALL_VISITS + " from {} to {}", patientId, from, to);
 			try {
 				return service.getVisitsDates(patientId, dateFrom, dateTo);

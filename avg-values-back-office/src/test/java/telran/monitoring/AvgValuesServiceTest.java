@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import telran.monitoring.entities.AvgPulseDoc;
 import telran.monitoring.model.PulseProbe;
-import telran.monitoring.repo.PulseProbesRepository;
+import telran.monitoring.repo.AvgPulseProbeRepository;
 import telran.monitoring.service.AvgValuesService;
 
 @SpringBootTest
@@ -51,7 +51,7 @@ class AvgValuesServiceTest {
 	AvgValuesService service;
 	
 	@Autowired
-	PulseProbesRepository repository;
+	AvgPulseProbeRepository repository;
 	
 	@BeforeEach
 	void fillRepo() {
