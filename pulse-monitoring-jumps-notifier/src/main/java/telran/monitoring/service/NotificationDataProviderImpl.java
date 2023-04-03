@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.extern.slf4j.Slf4j;
 import telran.monitoring.model.NotificationData;
 
 @Service
+@Slf4j
 public class NotificationDataProviderImpl implements NotificationDataProvider {
 
 	@Autowired
@@ -28,11 +30,15 @@ public class NotificationDataProviderImpl implements NotificationDataProvider {
 	public NotificationData getData(long patientId) {
 		ResponseEntity<NotificationData> response = 
 				restTemplate.exchange(getFullUrl(patientId), HttpMethod.GET, null, NotificationData.class);
-		return response.getBody();
+		NotificationData notificationData = response.getBody();
+		log.debug("notificationData - doctorEmail: {}, doctorName: {}, patientName: {}", notificationData.doctorEmail, notificationData.doctorName, notificationData.patientName);
+		return notificationData;
 	}
 	
 	private String getFullUrl(long patientId) {
-		return String.format("http://%s:%d/%s/%d", host, port, mappingUrl, patientId);
+		String uri = String.format("http://%s:%d/%s/%d", host, port, mappingUrl, patientId);
+		log.debug("URI for communication with data provider is {}", uri);
+		return uri;
 	}
 
 }
