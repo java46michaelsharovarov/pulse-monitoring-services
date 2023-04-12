@@ -94,5 +94,7 @@
 		<module>avg-values-back-office</module>
 		<module>visits-back-office</module>
 		<module>pulse-monitoring-configuration-server</module>
+		<module>pulse-monitoring-gateway</module>
+		<module>gateway</module>
 	</modules>
 </project>

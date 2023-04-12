@@ -2,10 +2,8 @@ package telran.monitoring.controller;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import telran.monitoring.model.*;
 import telran.monitoring.service.VisitsService;
@@ -27,75 +26,49 @@ import telran.monitoring.service.VisitsService;
 @Slf4j
 public class VisitsController {
 
+	private static final String VALID_ID_MSG = "patient id can't be null or less than 1";
 	private static final String REQUEST_TO_ALL_VISITS = "request to receive all patient visits with id: {}";
-	private static final String REQUEST_TO_ADD = "request to add : {}";
-	private static final String ADDED_SUCCESSFULLY = "%s has been added";
-	
+	private static final String REQUEST_TO_ADD_MSG = "request to add: {}";
+	private static final String ADDED_SUCCESSFULLY_MSG = "%s has been added";
+	private static final String REGEXP_DATE_MSG = "date should be in format YYYY-MM-DD";
+	private static final String REGEXP_DATE = "\\d{4}-(0\\d|1[012])-(0\\d|[12]\\d|3[01])";
+
 	@Autowired
 	VisitsService service;
-	
+
 	@PostMapping("add/patient")
 	String addPatient(@RequestBody @Valid PatientDto patient) {
-		log.debug(REQUEST_TO_ADD, patient);
-		try {
-			service.addPatient(patient);
-		} catch (IllegalStateException e) {
-			log.error(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-					e.getMessage());
-		}
-		return String.format(ADDED_SUCCESSFULLY, patient);
+		log.debug(REQUEST_TO_ADD_MSG, patient);
+		service.addPatient(patient);
+		return String.format(ADDED_SUCCESSFULLY_MSG, patient);
 	}
-	
+
 	@PostMapping("add/doctor")
 	String addDoctor(@RequestBody @Valid DoctorDto doctor) {
-		log.debug(REQUEST_TO_ADD, doctor);
-		try {
-			service.addDoctor(doctor);
-		} catch (IllegalStateException e) {
-			log.error(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-					e.getMessage());
-		}
-		return String.format(ADDED_SUCCESSFULLY, doctor);
+		log.debug(REQUEST_TO_ADD_MSG, doctor);
+		service.addDoctor(doctor);
+		return String.format(ADDED_SUCCESSFULLY_MSG, doctor);
 	}
-	
+
 	@PostMapping("add/visit")
 	String addVisit(@RequestBody @Valid VisitDto visit) {
-		log.debug(REQUEST_TO_ADD, visit);
-		try {
-			service.addVisit(visit);
-		} catch (NoSuchElementException e) {
-			log.error(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					e.getMessage());
-		}
-		return String.format(ADDED_SUCCESSFULLY, visit);
+		log.debug(REQUEST_TO_ADD_MSG, visit);
+		service.addVisit(visit);
+		return String.format(ADDED_SUCCESSFULLY_MSG, visit);
 	}
-	
+
 	@GetMapping("/{id}")
-	List<VisitDto> getVisits(@PathVariable(name = "id") long patientId,
-			@RequestParam(name = "from", required = false) String from,
-			@RequestParam(name = "to", required = false) String to) {
-		try {
-			if(from == null && to == null) {
-				log.debug(REQUEST_TO_ALL_VISITS, patientId);
-				return service.getAllVisits(patientId);
-			}
-			LocalDate dateFrom = from == null ? LocalDate.of(1000, 1, 1) : LocalDate.parse(from);
-			LocalDate dateTo = to == null ? LocalDate.of(10000, 1, 1) : LocalDate.parse(to);
-			log.debug(REQUEST_TO_ALL_VISITS + " from {} to {}", patientId, from, to);
-			try {
-				return service.getVisitsDates(patientId, dateFrom, dateTo);
-			} catch (IllegalArgumentException e) {
-				log.error(e.getMessage());
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-						e.getMessage());
-			}
-		} catch (NoSuchElementException e) {
-			log.error(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					e.getMessage());
+	List<VisitDto> getVisits(
+			@Min(value = 1, message = VALID_ID_MSG) @PathVariable(name = "id") long patientId,
+			@Pattern(regexp = REGEXP_DATE, message = REGEXP_DATE_MSG) @RequestParam(name = "from", required = false) String from,
+			@Pattern(regexp = REGEXP_DATE, message = REGEXP_DATE_MSG) @RequestParam(name = "to", required = false) String to) {
+		if (from == null && to == null) {
+			log.debug(REQUEST_TO_ALL_VISITS, patientId);
+			return service.getAllVisits(patientId);
 		}
+		LocalDate dateFrom = from == null ? LocalDate.of(1000, 1, 1) : LocalDate.parse(from);
+		LocalDate dateTo = to == null ? LocalDate.now() : LocalDate.parse(to);
+		log.debug(REQUEST_TO_ALL_VISITS + " from {} to {}", patientId, dateFrom, dateTo);
+		return service.getVisitsDates(patientId, dateFrom, dateTo);
 	}
 }

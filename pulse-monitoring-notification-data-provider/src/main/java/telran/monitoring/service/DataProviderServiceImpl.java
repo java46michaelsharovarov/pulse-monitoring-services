@@ -17,6 +17,9 @@ import telran.monitoring.repo.VisitRepository;
 @Transactional(readOnly = true)
 public class DataProviderServiceImpl implements DataProviderService {
 
+	private static final String LAST_VISIT_MSG = "last visit patient ID {}: {}";
+	private static final String NOT_EXIST_MSG = "patient with id: %d does not exist";
+
 	@Autowired
 	VisitRepository visitRepository;
 	
@@ -30,13 +33,14 @@ public class DataProviderServiceImpl implements DataProviderService {
 	public NotificationData getNotificationData(long patientId) {
 		String doctorEmail = visitRepository.getDoctorEmail(patientId);
 		if(doctorEmail == null) {
-			log.debug("patient with id {} does not exist", patientId);
-			throw new NoSuchElementException(String.format("Patient with id %d does not exist", patientId));
+			String msg = String.format(NOT_EXIST_MSG, patientId);
+			log.debug(msg);
+			throw new NoSuchElementException(msg);
 		}
 		String doctorName = doctorRepository.findById(doctorEmail).get().getName();
 		String patientName = patientRepository.findById(patientId).get().getName();
 		NotificationData data = new NotificationData(doctorEmail, doctorName, patientName);
-		log.debug("last vist patient ID {}: {}", patientId, data.toString());
+		log.debug(LAST_VISIT_MSG, patientId, data.toString());
 		return data;
 	}
 

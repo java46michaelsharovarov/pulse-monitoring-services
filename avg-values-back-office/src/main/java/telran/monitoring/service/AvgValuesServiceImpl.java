@@ -15,29 +15,46 @@ import telran.monitoring.repo.AvgPulseProbeRepository;
 @Transactional(readOnly = true)
 public class AvgValuesServiceImpl implements AvgValuesService {
 
+	private static final String EMPTY = "empty";
+	private static final String DATE_ERROR_MSG = "date 'from' %s can't be after date 'to' %s";
+	private static final String NOT_EXIST_MSG = "patient with id: %d does not exist";
+	private static final String MSG_AVG_PULSE_VALUE = "average pulse value for patient ID {}: {}";
+	
 	@Autowired
 	AvgPulseProbeRepository avgPulseProbeRepository;
 	
 	@Override
 	public int getAvgValue(long patientId, LocalDateTime from, LocalDateTime to) {
-		if(!avgPulseProbeRepository.existsByPatientId(patientId)) {
-			log.error("patient with id:{} does not exist", patientId);
-			throw new NoSuchElementException(String.format("patient with id:%d does not exist", patientId));
-		}
+		checkPatientId(patientId);
 		if(from.isAfter(to)) {
-			log.error("date 'from' {} cannot be after date 'to' {}", from, to);
-			throw new IllegalArgumentException(String.format("date 'from' %s cannot be after date 'to' %s", from, to));
+			String msg = String.format(DATE_ERROR_MSG, from, to);
+			log.error(msg);
+			throw new IllegalStateException(msg);
 		}
-		int avg = avgPulseProbeRepository.getAvgValueByPatientIdAndDateRange(patientId, from, to);
-		log.debug("average pulse value for patient ID {} from {} to {}: {}", patientId, from, to, avg);
+		int avg;
+		try {
+			avg = avgPulseProbeRepository.getAvgValueByPatientIdAndDateRange(patientId, from, to);
+		} catch (Exception e) {
+			throw new NoSuchElementException(EMPTY);
+		}
+		log.debug("from {} to {} " + MSG_AVG_PULSE_VALUE, from, to, patientId, avg);
 		return avg;
 	}
 
 	@Override
 	public int getAvgValue(long patientId) {
+		checkPatientId(patientId);
 		int avg = avgPulseProbeRepository.getAvgValueByPatientId(patientId);
-		log.debug("average pulse value for patient ID {}: {}", patientId, avg);
+		log.debug(MSG_AVG_PULSE_VALUE, patientId, avg);
 		return avg;
+	}
+
+	private void checkPatientId(long patientId) {
+		if(!avgPulseProbeRepository.existsByPatientId(patientId)) {
+			String msg = String.format(NOT_EXIST_MSG, patientId);
+			log.error(msg);
+			throw new NoSuchElementException(msg);
+		}
 	}
 
 }

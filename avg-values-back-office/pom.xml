@@ -26,5 +26,10 @@
 		<version>4.5.2</version>
 		<scope>test</scope>
 	</dependency>
+	 <dependency>
+		<groupId>telran.exception-handling-library</groupId>
+	  	<artifactId>exception-handling-library</artifactId>
+	  	<version>0.0.1</version>
+	</dependency>
   </dependencies>
 </project>

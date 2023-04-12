@@ -19,6 +19,16 @@ import telran.monitoring.entities.*;
 @Transactional
 public class VisitsServiceImpl implements VisitsService {
 
+	private static final String ALL_VISITS_MSG = "all visits of patient with id {}: {}";
+	private static final String NO_VISITS_MSG = "patient with id: {} has no visits";
+	private static final String VISIT_SAVED_IN_REPOSITORY_MSG = "visit - doctorEmail: {}, patient Id: {}, date: {} is saved in repository";
+	private static final String DOCTOR_NOT_EXIST_MSG = "doctor with email: %s does not exist";
+	private static final String PATIENT_NOT_EXIST_MSG = "patient with id: %d does not exist";
+	private static final String DOCTOR_EXIST_MSG = "doctor with email %s already exist";
+	private static final String SAVED_IN_REPOSITORY_MSG = "{} is saved in repository";
+	private static final String PATIENT_EXIST_MSG = "patient with id %d already exist";
+	private static final String DATE_ERROR_MSG = "date 'from' %s can't be after date 'to' %s";
+
 	@Autowired
 	DoctorRepository doctorRepository;
 	
@@ -31,79 +41,86 @@ public class VisitsServiceImpl implements VisitsService {
 	@Override
 	public void addPatient(PatientDto patientDto) {
 		if(patientRepository.existsById(patientDto.patientId)) {
-			log.error("patient with id {} already exist", patientDto.patientId);
-			throw new IllegalStateException(String.format("patient with id %d already exist", patientDto.patientId));
+			String msg = String.format(PATIENT_EXIST_MSG, patientDto.patientId);
+			log.error(msg);
+			throw new IllegalStateException(msg);
 		}
 		PatientEntity patient = new PatientEntity(patientDto.patientId, patientDto.patientName);
 		patientRepository.save(patient);
-		log.debug("{} is saved in repository", patientDto);
+		log.debug(SAVED_IN_REPOSITORY_MSG, patientDto);
 	}
 
 	@Override
 	public void addDoctor(DoctorDto doctorDto) {
 		if(doctorRepository.existsById(doctorDto.doctorEmail)) {
-			log.error("doctor with email {} already exist", doctorDto.doctorEmail);
-			throw new IllegalStateException(String.format("doctor with email %s already exist", doctorDto.doctorEmail));
+			String msg = String.format(DOCTOR_EXIST_MSG, doctorDto.doctorEmail);
+			log.error(msg);
+			throw new IllegalStateException(msg);
 		}
 		DoctorEntity doctor = new DoctorEntity(doctorDto.doctorEmail, doctorDto.doctorName);
 		doctorRepository.save(doctor);
-		log.debug("{} is saved in repository", doctorDto);
+		log.debug(SAVED_IN_REPOSITORY_MSG, doctorDto);
 	}
 
 	@Override
 	public void addVisit(VisitDto visitDto) {
 		PatientEntity patient = patientRepository.findById(visitDto.patientId).orElse(null);
 		if(patient == null) {
-			log.error("patient with id:{} does not exist", visitDto.patientId);
-			throw new NoSuchElementException(String.format("patient with id:%d does not exist", visitDto.patientId));
+			String msg = String.format(PATIENT_NOT_EXIST_MSG, visitDto.patientId);
+			log.error(msg);
+			throw new NoSuchElementException(msg);
 		}
 		DoctorEntity doctor = doctorRepository.findById(visitDto.doctorEmail).orElse(null);
 		if(doctor == null) {
-			log.error("doctor with email:{} does not exist", visitDto.doctorEmail);
-			throw new NoSuchElementException(String.format("doctor with email:%s does not exist", visitDto.doctorEmail));
+			String msg = String.format(DOCTOR_NOT_EXIST_MSG, visitDto.doctorEmail);
+			log.error(msg);
+			throw new NoSuchElementException(msg);
 		}
 		LocalDate date = LocalDate.parse(visitDto.date);
 		VisitEntity visit = new VisitEntity(doctor, patient, date);
 		visitRepository.save(visit);
-		log.debug("visit - doctorEmail: {}, patient Id: {}, date: {} is saved in repository", visitDto.doctorEmail, visitDto.patientId, visitDto.date);
+		log.debug(VISIT_SAVED_IN_REPOSITORY_MSG, visitDto.doctorEmail, visitDto.patientId, visitDto.date);
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
 	public List<VisitDto> getAllVisits(long patientId) {
-		if(!patientRepository.existsById(patientId)) {
-			log.error("patient with id:{} does not exist", patientId);
-			throw new NoSuchElementException(String.format("patient with id:%d does not exist", patientId));
-		}
+		checkPatientId(patientId);
 		List<VisitEntity> visits = visitRepository.findByPatientId(patientId);
 		if(visits == null) {
-			log.debug("visits is NULL");
+			log.debug(NO_VISITS_MSG, patientId);
 			return Collections.emptyList();
 		}
 		List<VisitDto> res = fromEntityToDto(visits);
-		log.debug("all visits of patient with id {}: {}", patientId, res);
+		log.debug(ALL_VISITS_MSG, patientId, res);
 		return res;
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<VisitDto> getVisitsDates(long patientId, LocalDate from, LocalDate to) {
-		if(!patientRepository.existsById(patientId)) {
-			log.error("patient with id:{} does not exist", patientId);
-			throw new NoSuchElementException(String.format("patient with id:%d does not exist", patientId));
-		}
+		checkPatientId(patientId);
 		if(from.isAfter(to)) {
-			log.error("date 'from' {} cannot be after date 'to' {}", from, to);
-			throw new IllegalArgumentException(String.format("date 'from' %s cannot be after date 'to' %s", from, to));
+			String msg = String.format(DATE_ERROR_MSG, from, to);
+			log.error(msg);
+			throw new IllegalStateException(msg);
 		}
 		List<VisitEntity> visits = visitRepository.findByPatientIdAndBetweenDate(patientId, from, to);
 		if(visits == null) {
-			log.debug("visits is NULL");
+			log.debug(NO_VISITS_MSG, patientId);
 			return Collections.emptyList();
 		}
 		List<VisitDto> res = fromEntityToDto(visits);
-		log.debug("all visits of patient with id {} from {} to {}: {}", patientId, from, to, res);
+		log.debug("from {} to {} " + ALL_VISITS_MSG, from, to, patientId, res);
 		return res;
+	}
+
+	private void checkPatientId(long patientId) {
+		if(!patientRepository.existsById(patientId)) {
+			String msg = String.format(PATIENT_NOT_EXIST_MSG, patientId);
+			log.error(msg);
+			throw new NoSuchElementException(msg);
+		}
 	}
 
 	private List<VisitDto> fromEntityToDto(List<VisitEntity> visits) {
