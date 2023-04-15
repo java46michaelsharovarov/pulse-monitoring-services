@@ -133,7 +133,7 @@ class VisitsServiceTest {
 	@Test
 	@Order(12)
 	void getVisitsWithReversedDatesTest() {
-		assertThrows(IllegalArgumentException.class, () -> service.getVisitsDates(NEW_PATIENT_ID, LocalDate.parse(DATE_2), LocalDate.parse(DATE_1)));
+		assertThrows(IllegalStateException.class, () -> service.getVisitsDates(NEW_PATIENT_ID, LocalDate.parse(DATE_2), LocalDate.parse(DATE_1)));
 	}
 	
 }

@@ -96,5 +96,6 @@
 		<module>pulse-monitoring-configuration-server</module>
 		<module>pulse-monitoring-gateway</module>
 		<module>gateway</module>
+		<module>pulse-monitoring-avg-populator1</module>
 	</modules>
 </project>

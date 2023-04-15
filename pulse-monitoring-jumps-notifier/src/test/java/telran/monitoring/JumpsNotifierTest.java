@@ -41,11 +41,14 @@ class JumpsNotifierTest {
 			.withConfiguration(GreenMailConfiguration.aConfig().withUser("pulse", "12345.com"));
 
 	private static final long PATIENT_ID = 123;
+	private static final long PATIENT_ID1 = 0;
 	private static final int PREVIOUS_VALUE = 70;
 	private static final int CURRENT_VALUE = 140;
 	private static final String DOCTOR_EMAIL = "doctor@gmail.com";
 	private static final String DOCTOR_NAME = "Vasya";
 	private static final String PATIENT_NAME = "Asya";
+	private static final String HOSPITAL_SERVICE_EMAIL = "hospital-service@gmail.com";
+
 	PulseJump pulseJump = new PulseJump(PATIENT_ID, PREVIOUS_VALUE, CURRENT_VALUE);
 
 	@Test
@@ -59,6 +62,18 @@ class JumpsNotifierTest {
 		log.debug("message");
 		assertEquals(DOCTOR_EMAIL, message.getAllRecipients()[0].toString());
 		assertTrue(message.getSubject().contains(PATIENT_NAME));
+	}
+	
+	@Test
+	void testNotificationDataIsNull() throws MessagingException {
+		when(dataProvider.getData(PATIENT_ID1))
+		.thenReturn(null);
+		log.debug("test");
+		producer.send(new GenericMessage<PulseJump>(pulseJump), "jumpsConsumer-in-0");
+		log.debug("send");
+		MimeMessage message = mailExtension.getReceivedMessages()[0];
+		log.debug("message");
+		assertEquals(HOSPITAL_SERVICE_EMAIL, message.getAllRecipients()[0].toString());
 	}
 
 }

@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,15 +22,17 @@ import telran.monitoring.model.NotificationData;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class NotificationDataProviderTest {
 
 	@Autowired
 	MockMvc mockMvc;
 	
 	@Test
+	@Order(1)
 	@Sql(scripts = "DoctorsPatientsVisits.sql")
-	void test() throws Exception {
-		String jsonResponse = mockMvc.perform(get("/visits/last/123"))
+	void testOk() throws Exception {
+		String jsonResponse = mockMvc.perform(get("/lastVisit/123"))
 				.andExpect(status().isOk())
 				.andReturn()
 				.getResponse()
@@ -38,6 +43,18 @@ class NotificationDataProviderTest {
 		assertEquals("doctor2@gmail.com", notificationData.doctorEmail);
 		assertEquals("doctor2", notificationData.doctorName);
 		assertEquals("Vasya", notificationData.patientName);
+	}
+	
+	@Test
+	@Order(2)
+	void testExceptions() throws Exception {
+		String jsonResponse = mockMvc.perform(get("/lastVisit/125"))
+				.andExpect(status().isNotFound())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		log.debug("response: {}", jsonResponse);
+		assertEquals("no visits for patient with id: 125", jsonResponse);
 	}
 
 }

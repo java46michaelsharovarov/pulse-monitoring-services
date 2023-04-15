@@ -86,7 +86,7 @@ class AvgValuesServiceTest {
 	@Test
 	@Order(4)
 	void getVisitsWithReversedDatesTest() {
-		assertThrows(IllegalArgumentException.class, () -> service.getAvgValue(PATIENT_ID, localDate2, localDate1));
+		assertThrows(IllegalStateException.class, () -> service.getAvgValue(PATIENT_ID, localDate2, localDate1));
 	}
 
 }

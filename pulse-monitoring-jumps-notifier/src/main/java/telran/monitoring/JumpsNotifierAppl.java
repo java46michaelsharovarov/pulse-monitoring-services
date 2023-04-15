@@ -24,6 +24,9 @@ public class JumpsNotifierAppl {
 	@Autowired
 	NotificationDataProvider dataProvider;
 	
+	@Value("${app.mail.address.hospital.service:hospital-service@gmail.com}")
+	String hospitalServiceEmail;
+	
 	@Value("${app.mail.subject: Pulse Jump Notification}")
 	String subject;
 
@@ -43,6 +46,10 @@ public class JumpsNotifierAppl {
 
 	private void sendMail(PulseJump jump) {
 		NotificationData data = dataProvider.getData(jump.patientId);
+		if(data == null) {
+			log.warn("mail will be sent to the emergency service");
+			data = new NotificationData(hospitalServiceEmail, "Hospital Service", "");
+		}
 		SimpleMailMessage smm = new SimpleMailMessage();
 		String text = getMailText(jump, data);
 		smm.setTo(data.doctorEmail);
@@ -51,11 +58,14 @@ public class JumpsNotifierAppl {
 		mailSender.send(smm);
 		log.trace("sent text mail {}", text);
 	}
-
+	
 	private String getMailText(PulseJump jump, NotificationData data) {
+		if(data.patientName.isEmpty()) {
+			return "Notification Data Provider Service has not sent"
+					+ " data for patient with id:" + jump.patientId;
+		}
 		return String.format("Dear Dr. %s%nPatient %s has pulse jump%n"
 				+ "previous value: %d; current value: %d%n", 
 				data.doctorName, data.patientName, jump.previousValue, jump.currentValue);
 	}
-	
 }
